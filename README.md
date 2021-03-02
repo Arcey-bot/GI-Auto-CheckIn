@@ -16,4 +16,4 @@ The script will NOT run in the background and execute as needed. It is expected 
 or from the Windows Task Scheduler as needed.
 
 I am not responsible for anything that may happen to you, your system, or your account as a result of using this script.
-# USE AT YOUR OWN RISK!
+__USE AT YOUR OWN RISK!__
