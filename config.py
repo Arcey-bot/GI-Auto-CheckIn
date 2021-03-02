@@ -9,3 +9,5 @@ MOVEMENT_DURATION = 0.69  # Number of seconds it takes to move the cursor to its
 TIME_LOAD_PAGE = 7  # Seconds to wait for page to load
 SHORT_LOAD = 0.75  # Seconds to wait between performing actions (i.e. clicking, dragging)
 ZOOM_STEP = 0  # Steps to zoom the browser in/out by
+RUN_DAILY = True  # Keep the script sleeping in background and run at the same time daily
+RUN_INTERVAL = 24  # Hours to wait before running script again (Default is 24 hours/1 day)

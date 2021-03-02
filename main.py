@@ -6,6 +6,7 @@
 #       The active browser window is on, otherwise it won't provide the desired result
 import pyautogui as pag
 from math import floor
+import datetime as dt
 import subprocess
 import config
 import shlex
@@ -96,4 +97,11 @@ def main():
     destroy_page()
 
 
-main()
+while config.RUN_DAILY:
+    # Run script
+    main()
+
+    # Calculate how long to wait until next execution
+    now = dt.datetime.utcnow()
+    tomorrow = now + dt.timedelta(days=config.RUN_INTERVAL)
+    time.sleep((tomorrow - now).total_seconds())
