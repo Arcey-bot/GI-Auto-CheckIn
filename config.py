@@ -8,3 +8,4 @@ CLICK_X_OFFSET = 0  # Offset cursor horizontally before clicking (pos right, neg
 MOVEMENT_DURATION = 0.69  # Number of seconds it takes to move the cursor to its target location (nice)
 TIME_LOAD_PAGE = 7  # Seconds to wait for page to load
 SHORT_LOAD = 0.75  # Seconds to wait between performing actions (i.e. clicking, dragging)
+ZOOM_STEP = 0  # Steps to zoom the browser in/out by
