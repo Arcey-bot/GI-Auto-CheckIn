@@ -11,6 +11,8 @@ import config
 import shlex
 import time
 
+# TODO: Run on it's own and sleep while waiting
+
 
 # Complete prepwork needed to collect reward
 def setup_page():
@@ -19,6 +21,22 @@ def setup_page():
 
     # Scroll down to get the full calendar in view
     pag.scroll(-1 * (floor(pag.size().height / 2)) + config.BOOTSTRAP_HEIGHT)
+
+    time.sleep(config.SHORT_LOAD)
+
+    # Zoom out x steps to get the full calendar in view
+    for i in range(config.ZOOM_STEP):
+        pag.hotkey('ctrlleft', '-')
+
+
+# Destroy the open page and reset any changes made
+def destroy_page():
+    # Zoom back to the user's original zoom level
+    for i in range(config.ZOOM_STEP):
+        pag.hotkey('ctrlleft', '+')
+
+    # Chrome hotkey to close tab
+    pag.hotkey('ctrlleft', 'w')
 
 
 # Locate and drag the cursor to today's reward
@@ -49,11 +67,6 @@ def collect_reward():
     # Clicking opens confirmation menu
     pag.click()
 
-    # Wait x second(s) for confirmation to load
-    time.sleep(config.SHORT_LOAD)
-
-    # TODO: Confirmation?
-
 
 def main():
     # Open chrome as a subprocess using the current user accounts
@@ -79,8 +92,8 @@ def main():
 
     # Wait x seconds after moving to hopefully guarantee collection
     time.sleep(config.SHORT_LOAD)
-    # Chrome hotkey to close tab
-    pag.hotkey('ctrlleft', 'w')
+
+    destroy_page()
 
 
 main()
