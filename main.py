@@ -11,8 +11,6 @@ import config
 import shlex
 import time
 
-# TODO: Screen independent?
-
 
 # Complete prepwork needed to collect reward
 def setup_page():
@@ -62,7 +60,6 @@ def main():
     # Theoretically this works with any browser, only tested with Chrome
     proc = subprocess.Popen(shlex.split(rf'"{config.BROWSER}" "{config.URL}"'))
 
-    # TODO: Way to see if page is loaded?
     # Wait x seconds to make sure the page loads
     time.sleep(config.TIME_LOAD_PAGE)
     # Kill the subprocess, it's no longer needed
