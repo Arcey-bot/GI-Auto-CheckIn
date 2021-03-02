@@ -5,6 +5,7 @@ The rewards are not worth the time of actually collecting manually, so I wasted 
 A majority of settings are customizable, and can be changed in config.py based on how fast or slow your PC runs.
  - In testing, I found the website to be unreliably slow at times. Because of this, I have set the default
     value for `TIME_LOAD_PAGE` to a higher than desireable amount.
+ - If using multiple monitors and your browser is already running, ensure the browser and script run on the same screen
 
 The script will automatically launch a chrome tab (or instance if necessary) and connect to the desired website.
 It will then claim your daily reward, and close the created tab.
