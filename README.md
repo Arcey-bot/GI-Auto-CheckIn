@@ -6,6 +6,8 @@ A majority of settings are customizable, and can be changed in config.py based o
  - In testing, I found the website to be unreliably slow at times. Because of this, I have set the default
     value for `TIME_LOAD_PAGE` to a higher than desireable amount.
  - If using multiple monitors and your browser is already running, ensure the browser and script run on the same screen
+ - Based on limited testing, the size of the top_indicator.png needs to be on the same scale as the page zoom.
+ - - For example, at 100% Zoom, the image is fine as is. For 75% zoom, the image needs to be scaled down to 75% 
 
 The script will automatically launch a chrome tab (or instance if necessary) and connect to the desired website.
 It will then claim your daily reward, and close the created tab.
