@@ -91,8 +91,8 @@ def main():
     # Click the cursor to claim the daily reward
     pag.click()
 
-    # Wait x seconds after moving to hopefully guarantee collection
-    time.sleep(config.SHORT_LOAD)
+    # Wait x seconds after collecting reward
+    time.sleep(config.CONFIRM_LOAD)
 
     destroy_page()
 
