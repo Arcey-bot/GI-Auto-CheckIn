@@ -97,11 +97,14 @@ def main():
     destroy_page()
 
 
-while config.RUN_DAILY:
-    # Run script
-    main()
+# Run at least once, on start
+main()
 
+while config.RUN_DAILY:
     # Calculate how long to wait until next execution
     now = dt.datetime.utcnow()
     tomorrow = now + dt.timedelta(days=config.RUN_INTERVAL)
     time.sleep((tomorrow - now).total_seconds())
+
+    # Run script
+    main()
