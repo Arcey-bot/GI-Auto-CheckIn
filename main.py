@@ -54,6 +54,8 @@ def goto_reward():
         # Tween makes it look more human (kinda not really, but less bot-like)
         pag.moveTo(reward.x + config.CLICK_X_OFFSET, reward.y + config.CLICK_Y_OFFSET, duration=config.MOVEMENT_DURATION,
                    tween=pag.easeOutQuad)
+
+        print('Collected reward')
     except pag.ImageNotFoundException:
         # The indicator was not found
         pag.alert("Today's reward could not be found. Have you already claimed it?")
@@ -70,6 +72,8 @@ def collect_reward():
 
 
 def main():
+    print('Opening website...')
+
     # Open chrome as a subprocess using the current user accounts
     # Theoretically this works with any browser, only tested with Chrome
     proc = subprocess.Popen(shlex.split(rf'"{config.BROWSER}" "{config.URL}"'))
@@ -94,6 +98,7 @@ def main():
     # Wait x seconds after collecting reward
     time.sleep(config.CONFIRM_LOAD)
 
+    print('Closing website')
     destroy_page()
 
 
@@ -101,6 +106,7 @@ def main():
 main()
 
 while config.RUN_DAILY:
+    print(f'Going to sleep. Next run in {config.RUN_INTERVAL} hours')
     # Calculate how long to wait until next execution
     now = dt.datetime.utcnow()
     tomorrow = now + dt.timedelta(days=config.RUN_INTERVAL)
