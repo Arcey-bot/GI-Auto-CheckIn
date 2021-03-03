@@ -64,6 +64,8 @@ def goto_reward():
         for i in range(config.ZOOM_STEP):
             pag.hotkey('ctrlleft', '+')
 
+        print('Collection failed, aborting...')
+
         # Close the current tab
         pag.hotkey('ctrlleft', 'w')
         # Exit the program
