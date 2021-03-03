@@ -10,5 +10,5 @@ TIME_LOAD_PAGE = 7  # Seconds to wait for page to load
 CONFIRM_LOAD = 1  # Seconds to wait for confirm dialog to appear
 SHORT_LOAD = 0.75  # Seconds to wait between performing actions (i.e. clicking, dragging)
 ZOOM_STEP = 0  # Steps to zoom the browser in/out by
-RUN_DAILY = False  # Keep the script sleeping in background and run at the same time daily
+RUN_DAILY = True  # Keep the script sleeping in background and run at the same time daily (True/False)
 RUN_INTERVAL = 24  # Hours to wait before running script again (Default is 24 hours/1 day)
