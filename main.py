@@ -59,6 +59,11 @@ def goto_reward():
     except pag.ImageNotFoundException:
         # The indicator was not found
         pag.alert("Today's reward could not be found. Have you already claimed it?")
+
+        # Reset the user's zoom
+        for i in range(config.ZOOM_STEP):
+            pag.hotkey('ctrlleft', '+')
+
         # Close the current tab
         pag.hotkey('ctrlleft', 'w')
         # Exit the program
