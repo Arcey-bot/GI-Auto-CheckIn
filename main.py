@@ -4,6 +4,7 @@
 # And close the created tab
 # NOTE: If your chosen browser is already open, ensure this script runs on the same monitor
 #       The active browser window is on, otherwise it won't provide the desired result
+from calendar import monthrange
 import pyautogui as pag
 from math import floor
 import datetime as dt
@@ -41,18 +42,46 @@ def destroy_page():
 
 
 # Locate and drag the cursor to today's reward
-def goto_reward():
+def find_reward():
+    searching = True
+    i = 0
     try:
-        # Search for the top_indicator to find today's reward
-        reward = pag.locateCenterOnScreen('assets/top_indicator.png')
+        # Search for today's reward, 0.75 confidence required or it breaks (idk)
+        rewards = list(pag.locateAllOnScreen('assets/indicator.png', confidence=0.75))
+        print(len(rewards))
+        now = dt.datetime.utcnow()
 
-        # If we didn't find a reward, throw an error
-        if reward is None:
+        # If we didn't find any rewards, or too many rewards throw an error
+        if rewards is None or len(rewards) > monthrange(now.year, now.month)[1]:
             raise pag.ImageNotFoundException
+
+        # We cannot see today's reward on the screen
+        if now.day > len(rewards):
+            while searching:
+                # Scroll down to next row
+                pag.scroll(-1 * config.VERTICAL_OFFSET)
+                time.sleep(config.SHORT_LOAD)
+
+                # Scan page again for rewards
+                rewards = list(pag.locateAllOnScreen('assets/indicator.png', confidence=0.5))
+
+                # If the day is on the screen
+                if now.day <= len(rewards):
+                    searching = False
+                    # x, y = pag.center(rewards[now.day - 1])
+                    # pag.moveTo(x, y)
+                # If we find more reward icons than days in the month something went wrong, throw error
+                # If we have searched three times and can't find it, give up
+                if len(rewards) > monthrange(now.year, now.month)[1] or i > config.MAX_SEARCHES:
+                    raise pag.ImageNotFoundException
+                i += 1
+
+        # We know where today's icon is
+        x, y = pag.center(rewards[now.day - 1])
 
         # Move cursor to location, accounting for specified offsets
         # Tween makes it look more human (kinda not really, but less bot-like)
-        pag.moveTo(reward.x + config.CLICK_X_OFFSET, reward.y + config.CLICK_Y_OFFSET, duration=config.MOVEMENT_DURATION,
+        pag.moveTo(x + config.CLICK_X_OFFSET, y + config.CLICK_Y_OFFSET, duration=config.MOVEMENT_DURATION,
                    tween=pag.easeOutQuad)
 
         print('Collected reward')
@@ -97,7 +126,7 @@ def main():
     time.sleep(config.SHORT_LOAD)
 
     # Go to today's reward location on screen
-    goto_reward()
+    find_reward()
 
     # Click the cursor to claim the daily reward
     pag.click()
@@ -107,7 +136,6 @@ def main():
 
     print('Closing website')
     destroy_page()
-
 
 # Run at least once, on start
 main()
