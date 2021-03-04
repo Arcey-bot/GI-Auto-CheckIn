@@ -13,8 +13,6 @@ import config
 import shlex
 import time
 
-# TODO: Run on it's own and sleep while waiting
-
 
 # Complete prepwork needed to collect reward
 def setup_page():
@@ -49,7 +47,9 @@ def find_reward():
         # Search for today's reward, 0.75 confidence required or it breaks (idk)
         rewards = list(pag.locateAllOnScreen('assets/indicator.png', confidence=0.75))
         print(len(rewards))
-        now = dt.datetime.utcnow()
+
+        # Account for UTC +8 Offset
+        now = dt.datetime.utcnow() + dt.timedelta(hours=8)
 
         # If we didn't find any rewards, or too many rewards throw an error
         if rewards is None or len(rewards) > monthrange(now.year, now.month)[1]:
@@ -63,13 +63,12 @@ def find_reward():
                 time.sleep(config.SHORT_LOAD)
 
                 # Scan page again for rewards
-                rewards = list(pag.locateAllOnScreen('assets/indicator.png', confidence=0.5))
+                rewards = list(pag.locateAllOnScreen('assets/indicator.png', confidence=0.75))
 
                 # If the day is on the screen
                 if now.day <= len(rewards):
                     searching = False
-                    # x, y = pag.center(rewards[now.day - 1])
-                    # pag.moveTo(x, y)
+
                 # If we find more reward icons than days in the month something went wrong, throw error
                 # If we have searched three times and can't find it, give up
                 if len(rewards) > monthrange(now.year, now.month)[1] or i > config.MAX_SEARCHES:
@@ -128,8 +127,8 @@ def main():
     # Go to today's reward location on screen
     find_reward()
 
-    # Click the cursor to claim the daily reward
-    pag.click()
+    # Perform any necessary actions to collect reward
+    collect_reward()
 
     # Wait x seconds after collecting reward
     time.sleep(config.CONFIRM_LOAD)
@@ -143,7 +142,8 @@ main()
 while config.RUN_DAILY:
     print(f'Going to sleep. Next run in {config.RUN_INTERVAL} hours')
     # Calculate how long to wait until next execution
-    now = dt.datetime.utcnow()
+    # Account for UTC + 8 Offset
+    now = dt.datetime.utcnow() + dt.timedelta(hours=8)
     tomorrow = now + dt.timedelta(days=config.RUN_INTERVAL)
     time.sleep((tomorrow - now).total_seconds())
 
