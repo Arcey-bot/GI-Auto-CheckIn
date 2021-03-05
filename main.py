@@ -45,12 +45,11 @@ def find_reward():
     i = 0
     try:
         # Search for today's reward, 0.75 confidence required or it breaks (idk)
-        rewards = list(pag.locateAllOnScreen('assets/indicator.png', confidence=0.75))
+        rewards = list(pag.locateAllOnScreen('assets/indicator.png', confidence=config.CONFIDENCE))
         print(len(rewards))
 
         # Account for UTC +8 Offset
         now = dt.datetime.utcnow() + dt.timedelta(hours=8)
-
         # If we didn't find any rewards, or too many rewards throw an error
         if rewards is None or len(rewards) > monthrange(now.year, now.month)[1]:
             raise pag.ImageNotFoundException
@@ -63,7 +62,7 @@ def find_reward():
                 time.sleep(config.SHORT_LOAD)
 
                 # Scan page again for rewards
-                rewards = list(pag.locateAllOnScreen('assets/indicator.png', confidence=0.75))
+                rewards = list(pag.locateAllOnScreen('assets/indicator.png', confidence=config.CONFIDENCE))
 
                 # If the day is on the screen
                 if now.day <= len(rewards):
@@ -81,7 +80,7 @@ def find_reward():
         # Move cursor to location, accounting for specified offsets
         # Tween makes it look more human (kinda not really, but less bot-like)
         pag.moveTo(x + config.CLICK_X_OFFSET, y + config.CLICK_Y_OFFSET, duration=config.MOVEMENT_DURATION,
-                   tween=pag.easeOutQuad)
+                   tween=pag.easeInOutExpo)
 
         print('Collected reward')
     except pag.ImageNotFoundException:
@@ -135,6 +134,7 @@ def main():
 
     print('Closing website')
     destroy_page()
+
 
 # Run at least once, on start
 main()
