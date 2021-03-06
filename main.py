@@ -5,8 +5,8 @@
 # NOTE: If your chosen browser is already open, ensure this script runs on the same monitor
 #       The active browser window is on, otherwise it won't provide the desired result
 from calendar import monthrange
+from math import floor, ceil
 import pyautogui as pag
-from math import floor
 import datetime as dt
 import subprocess
 import config
@@ -41,20 +41,24 @@ def destroy_page():
 
 # Locate and drag the cursor to today's reward
 def find_reward():
+    i, x, y = 0, 0, 0
     searching = True
-    i = 0
     try:
-        # Search for today's reward, 0.75 confidence required or it breaks (idk)
-        rewards = list(pag.locateAllOnScreen('assets/indicator.png', confidence=config.CONFIDENCE))
-        print(len(rewards))
+        # Search for today's reward
+        rewards = list(pag.locateAllOnScreen('assets/indicator.png', grayscale=True, confidence=config.CONFIDENCE))
 
         # Account for UTC +8 Offset
         now = dt.datetime.utcnow() + dt.timedelta(hours=8)
-        # If we didn't find any rewards, or too many rewards throw an error
-        if rewards is None or len(rewards) > monthrange(now.year, now.month)[1]:
-            raise pag.ImageNotFoundException
+        month_length = monthrange(now.year, now.month)[1]
 
-        # We cannot see today's reward on the screen
+        # If we didn't find any rewards, throw an error
+        if rewards is None:
+            raise pag.ImageNotFoundException('Could not locate rewards')
+        # We found more rewards than actually exist, throw an error
+        elif len(rewards) > month_length:
+            raise pag.ImageNotFoundException('Too many rewards found')
+
+        # We have not found today's reward on screen
         if now.day > len(rewards):
             while searching:
                 # Scroll down to next row
@@ -62,20 +66,32 @@ def find_reward():
                 time.sleep(config.SHORT_LOAD)
 
                 # Scan page again for rewards
-                rewards = list(pag.locateAllOnScreen('assets/indicator.png', confidence=config.CONFIDENCE))
+                rewards = list(pag.locateAllOnScreen('assets/indicator.png', grayscale=True, confidence=config.CONFIDENCE))
 
                 # If the day is on the screen
-                if now.day <= len(rewards):
+                # After scrolling, account for week lost in the view
+                if now.day - (i * 7) <= len(rewards):
+                    # Decrement index by one to account for list starting at 0 but days starting at 1
+                    x, y = pag.center(rewards[(now.day % 7) - 1])
+                    # Get number of rows on screen
+                    rows_visible = ceil(len(rewards) / 7)
+
+                    # Calculate the correct y to click at
+                    # The y we get from center will go to shit
+                    y = config.VERTICAL_OFFSET * rows_visible
                     searching = False
 
                 # If we find more reward icons than days in the month something went wrong, throw error
-                # If we have searched three times and can't find it, give up
-                if len(rewards) > monthrange(now.year, now.month)[1] or i > config.MAX_SEARCHES:
-                    raise pag.ImageNotFoundException
+                if len(rewards) > month_length or i > config.MAX_SEARCHES:
+                    raise pag.ImageNotFoundException('Too many rewards found')
+                # If we have searched x times and can't find it, throw error
+                elif i > config.MAX_SEARCHES:
+                    raise pag.ImageNotFoundException('Reward not found within search period')
                 i += 1
-
-        # We know where today's icon is
-        x, y = pag.center(rewards[now.day - 1])
+        # Today's reward was within view at start
+        else:
+            # We know where today's icon is
+            x, y = pag.center(rewards[now.day - 1])
 
         # Move cursor to location, accounting for specified offsets
         # Tween makes it look more human (kinda not really, but less bot-like)
@@ -83,9 +99,12 @@ def find_reward():
                    tween=pag.easeInOutExpo)
 
         print('Collected reward')
-    except pag.ImageNotFoundException:
+    except pag.ImageNotFoundException as infe:
         # The indicator was not found
         pag.alert("Today's reward could not be found. Have you already claimed it?")
+
+        # Save error to console
+        print(infe)
 
         # Reset the user's zoom
         for i in range(config.ZOOM_STEP):
