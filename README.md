@@ -9,7 +9,7 @@ A majority of settings are customizable, and can be changed in config.py based o
  - Based on limited testing, the size of the top_indicator.png needs to be on the same scale as the page zoom.
  - - For example, at 100% Zoom, the image is fine as is. For 75% zoom, the image needs to be scaled down to 75% 
 
-The script will automatically launch a chrome tab (or instance if necessary) and connect to the desired website.
+The script will automatically launch a new tab (or instance if necessary) in your browser of choice and connect to the desired website.
 It will then claim your daily reward, and close the created tab.
 
 To use other browsers, replace the path in BROWSER with a path to your browser of choice, then pray it works.
