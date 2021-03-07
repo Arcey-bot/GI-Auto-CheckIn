@@ -99,6 +99,9 @@ def find_reward():
                    tween=pag.easeInOutExpo)
 
         print('Collected reward')
+
+        del rewards
+
     except pag.ImageNotFoundException as infe:
         # The indicator was not found
         pag.alert("Today's reward could not be found. Have you already claimed it?")
