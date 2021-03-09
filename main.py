@@ -162,11 +162,11 @@ def main():
 main()
 
 while config.RUN_DAILY:
-    print(f'Going to sleep. Next run in {config.RUN_INTERVAL} hours')
     # Calculate how long to wait until next execution
-    # Account for UTC + 8 Offset
-    now = dt.datetime.utcnow() + dt.timedelta(hours=8)
-    tomorrow = now + dt.timedelta(days=config.RUN_INTERVAL)
+    # UTC is unnecessary, system time works fine as this is for the end-user only
+    now = dt.datetime.now()
+    tomorrow = now + dt.timedelta(hours=config.RUN_INTERVAL)
+    print(f'Going to sleep. Next run on {tomorrow.strftime("%b %d, %Y at %H:%M:%S")}')
     time.sleep((tomorrow - now).total_seconds())
 
     # Run script
